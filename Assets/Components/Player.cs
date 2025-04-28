@@ -4,8 +4,11 @@ namespace Components
 {
     public class Player : MonoBehaviour
     {
-        [Header("Movement")] [SerializeField] private float velocity;
-        [Header("Rotation")] [SerializeField] private float mouseSensitivity;
+        [Header("Movement")]
+        [SerializeField] private float velocity;
+        
+        [Header("Rotation")]
+        [SerializeField] private float mouseSensitivity;
         [SerializeField, Range(-90.0f, 0.0f)] private float maxXRotation;
         [SerializeField, Range(0.0f, 90.0f)] private float minXRotation;
 

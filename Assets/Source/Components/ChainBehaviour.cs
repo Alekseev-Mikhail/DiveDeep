@@ -1,7 +1,7 @@
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Components
+namespace Source.Components
 {
     public class ChainBehaviour : Chain
     {

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static Components.GameMath;
+using static Source.Utilities.GameMath;
 
-namespace Components
+namespace Source.Components
 {
     public abstract class Chain : MonoBehaviour
     {

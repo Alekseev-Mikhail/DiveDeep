@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Components
+namespace Source.Utilities
 {
     public static class GameMath
     {

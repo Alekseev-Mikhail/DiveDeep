@@ -154,13 +154,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   head: {fileID: 225032106558869663}
-  nodeNumber: 0
+  nodeNumber: 20
   distanceBetweenNodes: 1
   bendAngle: 90
-  velocity: 0
-  maneuverability: 0
+  velocity: 0.05
+  maneuverability: 0.05
   targetBoxSize: 12
-  triggerBoxSize: 0
-  waveLength: 0
-  minWaveAmplitude: 0
-  maxWaveAmplitude: 0
+  triggerBoxSize: 2
+  waveLength: 0.5
+  minWaveAmplitude: 3
+  maxWaveAmplitude: 4

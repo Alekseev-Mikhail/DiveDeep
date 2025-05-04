@@ -1,0 +1,16 @@
+{
+    "name": "Components",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f1f8e9177f8fde3468b6422845011bf9"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

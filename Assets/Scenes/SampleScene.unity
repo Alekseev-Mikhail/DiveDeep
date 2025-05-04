@@ -210,13 +210,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 410087039}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalRotation: {x: 0.16773084, y: -0.25488696, z: 0.044943333, w: 0.9512513}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 20, y: -30, z: 0}
 --- !u!114 &410087042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -342,43 +342,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2108138936676268782, guid: 60089d8299cf7834ebce1f39eac6093e, type: 3}
-      propertyPath: velocity
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 2108138936676268782, guid: 60089d8299cf7834ebce1f39eac6093e, type: 3}
-      propertyPath: bendAngle
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 2108138936676268782, guid: 60089d8299cf7834ebce1f39eac6093e, type: 3}
       propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2108138936676268782, guid: 60089d8299cf7834ebce1f39eac6093e, type: 3}
-      propertyPath: nodeNumber
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 2108138936676268782, guid: 60089d8299cf7834ebce1f39eac6093e, type: 3}
-      propertyPath: waveLength
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2108138936676268782, guid: 60089d8299cf7834ebce1f39eac6093e, type: 3}
-      propertyPath: triggerBoxSize
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2108138936676268782, guid: 60089d8299cf7834ebce1f39eac6093e, type: 3}
-      propertyPath: maneuverability
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 2108138936676268782, guid: 60089d8299cf7834ebce1f39eac6093e, type: 3}
-      propertyPath: maxWaveAmplitude
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 2108138936676268782, guid: 60089d8299cf7834ebce1f39eac6093e, type: 3}
-      propertyPath: minWaveAmplitude
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 2108138936676268782, guid: 60089d8299cf7834ebce1f39eac6093e, type: 3}
-      propertyPath: distanceBetweenNodes
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7990257184115626774, guid: 60089d8299cf7834ebce1f39eac6093e, type: 3}
@@ -406,10 +370,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 532330413678135371, guid: de5669a700f64a34a8640eb991ea02c3, type: 3}
-      propertyPath: velocity
-      value: 0.3
-      objectReference: {fileID: 0}
     - target: {fileID: 6299766815697830882, guid: de5669a700f64a34a8640eb991ea02c3, type: 3}
       propertyPath: m_Name
       value: Player

@@ -1,8 +1,9 @@
-using Source.Utilities;
 using Source.Utilities.Inventory;
+using Source.Utilities.Inventory.Controllers;
 using Source.Utilities.Inventory.Items;
 using Source.Utilities.Inventory.Views;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 using Cursor = UnityEngine.Cursor;
 
@@ -10,76 +11,89 @@ namespace Source.Components
 {
     public class Player : MonoBehaviour
     {
-        [Header("Movement")] [SerializeField] private float velocity;
+        [Header("Movement")]
+        [SerializeField] private float velocity;
 
-        [Header("Rotation")] [SerializeField] private float mouseSensitivity;
+        [Header("Rotation")]
+        [SerializeField] private float mouseSensitivity;
         [SerializeField, Range(-90.0f, 0.0f)] private float maxXRotation;
         [SerializeField, Range(0.0f, 90.0f)] private float minXRotation;
 
-        [Header("Inventory")] [SerializeField] private UIDocument inventoryDocument;
+        [Header("Inventory")]
+        [SerializeField] private UIDocument inventoryDocument;
+        [SerializeField, Min(0.0f)] private int maxPickupDistance;
+        [SerializeField, Min(0.0f)] private int maxDropDistance;
         [SerializeField, Min(1.0f)] private int inventoryWidth;
         [SerializeField, Min(1.0f)] private int inventoryHeight;
         [SerializeField] private float slotSize;
         [SerializeField] private float distanceBetweenSlots;
-
-        private InventoryController<ColoredItem> _inventoryController;
+        
+        [Header("Other")]
+        [SerializeField] private UIDocument overlayDocument;
+        
+        private InventoryModel<IColoredItem, MouseInventoryController<IColoredItem>> _inventoryModel;
+        private InputAction _moveHorizontalAction; 
+        private InputAction _moveVerticalAction; 
+        private InputAction _lookAction; 
+        private InputAction _pickAction; 
 
         private void Start()
         {
             Cursor.lockState = CursorLockMode.Locked;
-            var preferences = new InventoryMarkup(
+            
+            var markup = new ColoredInventoryMarkup(
                 inventoryWidth,
                 inventoryHeight,
                 slotSize,
                 distanceBetweenSlots
             );
-            var view = new ColoredInventoryView(preferences);
+            var view = new ColoredInventoryView(markup);
 
-            _inventoryController = new InventoryController<ColoredItem>(
+            _inventoryModel = new InventoryModel<IColoredItem, MouseInventoryController<IColoredItem>>(
                 inventoryDocument,
                 view,
                 inventoryWidth,
                 inventoryHeight
             );
-
-            _inventoryController.PutItem(new ColoredItem(1, 1, new Color(1, 0, 0)), 2, 0);
-            _inventoryController.PutItem(new ColoredItem(2, 2, new Color(0, 1, 0)), 3, 3);
-            _inventoryController.PutItem(new ColoredItem(1, 3, new Color(0, 0, 1)), 0, 4);
+            
+            _moveHorizontalAction = InputSystem.actions.FindAction("MoveHorizontal");
+            _moveVerticalAction = InputSystem.actions.FindAction("MoveVertical");
+            _lookAction = InputSystem.actions.FindAction("Look");
+            _pickAction = InputSystem.actions.FindAction("Pickup");
         }
 
         private void Update()
         {
-            if (Input.GetButtonDown("Inventory")) _inventoryController.SwitchInventoryVisibility();
+            if (Input.GetButtonDown("Inventory")) _inventoryModel.SwitchInventoryVisibility();
         }
 
         private void FixedUpdate()
         {
-            if (_inventoryController.IsInventoryVisible) return;
+            if (_inventoryModel.IsInventoryVisible) return;
             ApplyRotation();
             ApplyMovement();
+            if (_pickAction.IsPressed()) _inventoryModel.TryPickupItem(transform, maxPickupDistance, maxDropDistance);
         }
 
         private void ApplyRotation()
         {
-            var mouseX = Input.GetAxis("Mouse X");
-            var mouseY = Input.GetAxis("Mouse Y");
+            var delta = _lookAction.ReadValue<Vector2>();
 
             var xRotation = transform.localEulerAngles.x > 180
                 ? transform.localEulerAngles.x - 360.0f
                 : transform.localEulerAngles.x;
-            var xDelta = Mathf.Clamp(-mouseY * mouseSensitivity, maxXRotation - xRotation, minXRotation - xRotation);
+            var xDelta = Mathf.Clamp(-delta.y * mouseSensitivity, maxXRotation - xRotation, minXRotation - xRotation);
 
-            transform.Rotate(new Vector3(0.0f, mouseX * mouseSensitivity, 0.0f), Space.World);
+            transform.Rotate(new Vector3(0.0f, delta.x * mouseSensitivity, 0.0f), Space.World);
             transform.Rotate(xDelta, 0.0f, 0.0f, Space.Self);
         }
 
         private void ApplyMovement()
         {
-            var forward = Input.GetAxis("Forward");
-            var horizontal = Input.GetAxis("Horizontal");
-            var vertical = Input.GetAxis("Vertical");
+            var horizontal = _moveHorizontalAction.ReadValue<Vector2>();
+            var vertical = _moveVerticalAction.ReadValue<float>();
 
-            var movementVector = new Vector3(horizontal, vertical, forward);
+            var movementVector = new Vector3(horizontal.x, vertical, horizontal.y);
             if (movementVector.magnitude > 1.0f) movementVector.Normalize();
 
             transform.Translate(movementVector * velocity);

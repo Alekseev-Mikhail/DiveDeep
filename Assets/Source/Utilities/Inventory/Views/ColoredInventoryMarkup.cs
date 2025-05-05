@@ -1,8 +1,8 @@
-﻿namespace Source.Utilities.Inventory
+﻿namespace Source.Utilities.Inventory.Views
 {
-    public struct InventoryMarkup
+    public struct ColoredInventoryMarkup
     {
-        public InventoryMarkup(int inventoryWidth, int inventoryHeight, float slotSize, float margin)
+        public ColoredInventoryMarkup(int inventoryWidth, int inventoryHeight, float slotSize, float margin)
         {
             SlotSize = slotSize;
             Margin = margin;

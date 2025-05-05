@@ -4,17 +4,43 @@
     {
         private int _width;
         private int _height;
-        private byte[][] _cells;
+        private int _columnSize;
+        private byte[][] _slots;
+
+        public BitArray2(int width, int height, byte[][] slots)
+        {
+            _width = width;
+            _height = height;
+            _slots = slots;
+        }
+
+        public BitArray2()
+        {
+        }
 
         public bool Init(int width, int height)
         {
             if (width <= 0 || height <= 0) return false;
             _width = width;
             _height = height;
-            _cells = new byte[width][];
-            var columnSize = height % sizeof(byte) != 0 ? height / sizeof(byte) + 1 : height / sizeof(byte);
-            for (var i = 0; i < width; i++) _cells[i] = new byte[columnSize];
+            _slots = new byte[width][];
+            _columnSize = height % sizeof(byte) != 0 ? height / sizeof(byte) + 1 : height / sizeof(byte);
+            for (var i = 0; i < width; i++) _slots[i] = new byte[_columnSize];
             return true;
+        }
+
+        public BitArray2 Copy()
+        {
+            var slots = new byte[_width][];
+            for (var x = 0; x < _width; x++)
+            {
+                slots[x] = new byte[_columnSize];
+                for (var y = 0; y < _columnSize; y++)
+                {
+                    slots[x][y] = _slots[x][y];
+                }
+            }
+            return new BitArray2(_width, _height, slots);
         }
 
         public int GetWidth() => _width;
@@ -35,7 +61,7 @@
         public bool GetValue(int x, int y)
         {
             if (x >= _width || x < 0 || y >= _height || y < 0) return false;
-            var chunk = _cells[x][y / sizeof(byte)];
+            var chunk = _slots[x][y / sizeof(byte)];
             var bitMask = (byte)(1 << (y % sizeof(byte)));
             return (chunk & bitMask) == 1;
         }
@@ -86,9 +112,9 @@
         public bool Invert(int x, int y)
         {
             if (x >= _width || x < 0 || y >= _height || y < 0) return false;
-            var chunk = _cells[x][y / sizeof(byte)];
+            var chunk = _slots[x][y / sizeof(byte)];
             var bitMask = (byte)(1 << (y % sizeof(byte)));
-            _cells[x][y / sizeof(byte)] = (byte)(chunk ^ bitMask);
+            _slots[x][y / sizeof(byte)] = (byte)(chunk ^ bitMask);
             return true;
         }
     }

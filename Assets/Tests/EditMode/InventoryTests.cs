@@ -181,5 +181,111 @@ namespace Tests.EditMode
             Assert.AreEqual(0, inventory.GetItems()[item2].y);
             Assert.AreEqual(2, inventory.GetItems().Count);
         }
+        
+        [Test]
+        public void PutItem_InFirstFreeSpace_PutsItem()
+        {
+            // Arrange
+            var inventory = new Inventory<DummyItem>(5, 5);
+            var item1 = new DummyItem(1, 1);
+            var item2 = new DummyItem(5, 2);
+            var item3 = new DummyItem(2, 1);
+
+            // Act
+            var res1 = inventory.PutItem(item1);
+            var res2 = inventory.PutItem(item2);
+            var res3 = inventory.PutItem(item3);
+
+            // Assert
+            Assert.AreEqual(true, res1);
+            Assert.AreEqual(true, res2);
+            Assert.AreEqual(true, res3);
+            Assert.AreEqual(0, inventory.GetItems()[item1].x);
+            Assert.AreEqual(0, inventory.GetItems()[item1].y);
+            
+            Assert.AreEqual(0, inventory.GetItems()[item2].x);
+            Assert.AreEqual(1, inventory.GetItems()[item2].y);
+            
+            Assert.AreEqual(1, inventory.GetItems()[item3].x);
+            Assert.AreEqual(0, inventory.GetItems()[item3].y);
+            
+            Assert.AreEqual(3, inventory.GetItems().Count);
+        }
+        
+        [Test]
+        public void PutItem_InFirstFreeSpaceButNoFreeSpace_DoesNotPutItem()
+        {
+            // Arrange
+            var inventory = new Inventory<DummyItem>(10, 10);
+            var item1 = new DummyItem(10, 10);
+            var item2 = new DummyItem(1, 1);
+
+            // Act
+            var res1 = inventory.PutItem(item1);
+            var res2 = inventory.PutItem(item2);
+
+            // Assert
+            Assert.AreEqual(true, res1);
+            Assert.AreEqual(false, res2);
+            Assert.AreEqual(0, inventory.GetItems()[item1].x);
+            Assert.AreEqual(0, inventory.GetItems()[item1].y);
+            Assert.AreEqual(1, inventory.GetItems().Count);
+        }
+        
+        [Test]
+        public void PutItem_InFirstFreeSpaceButTwiceSameItem_DoesNotPutItem()
+        {
+            // Arrange
+            var inventory = new Inventory<DummyItem>(10, 10);
+            var item = new DummyItem(1, 1);
+
+            // Act
+            var res1 = inventory.PutItem(item);
+            var res2 = inventory.PutItem(item);
+
+            // Assert
+            Assert.AreEqual(true, res1);
+            Assert.AreEqual(false, res2);
+            Assert.AreEqual(0, inventory.GetItems()[item].x);
+            Assert.AreEqual(0, inventory.GetItems()[item].y);
+            Assert.AreEqual(1, inventory.GetItems().Count);
+        }
+        
+        [Test]
+        public void RemoveItem_ValidItem_RemovesItem()
+        {
+            // Arrange
+            var inventory = new Inventory<DummyItem>(10, 10);
+            var item1 = new DummyItem(1, 1);
+            var item2 = new DummyItem(1, 1);
+
+            // Act
+            var res1 = inventory.PutItem(item1, 0, 0);
+            var res2 = inventory.RemoveItem(item1);
+            var res3 = inventory.PutItem(item2, 0, 0);
+
+            // Assert
+            Assert.AreEqual(true, res1);
+            Assert.AreEqual(true, res2);
+            Assert.AreEqual(true, res3);
+            Assert.AreEqual(0, inventory.GetItems()[item2].x);
+            Assert.AreEqual(0, inventory.GetItems()[item2].y);
+            Assert.AreEqual(1, inventory.GetItems().Count);
+        }
+        
+        [Test]
+        public void RemoveItem_DoesNotContainItem_DoesNotRemoveAnyItem()
+        {
+            // Arrange
+            var inventory = new Inventory<DummyItem>(10, 10);
+            var item = new DummyItem(1, 1);
+
+            // Act
+            var res = inventory.RemoveItem(item);
+
+            // Assert
+            Assert.AreEqual(false, res);
+            Assert.AreEqual(0, inventory.GetItems().Count);
+        }
     }
 }

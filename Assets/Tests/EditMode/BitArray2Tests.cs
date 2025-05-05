@@ -234,5 +234,38 @@ namespace Tests.EditMode
             Assert.AreEqual(false, bitArray.GetValue(9, 9));
             Assert.AreEqual(false, bitArray.GetValue(9, 8));
         }
+        
+        [Test]
+        public void Copy_ChangeCopiedArray_ShouldNotChangeOrigin()
+        {
+            // Arrange
+            var bitArray = new BitArray2();
+            const int width = 10;
+            const int height = 10;
+            
+            // Act
+            bitArray.Init(width, height);
+            var res1 = bitArray.Invert(9, 9);
+            var copied = bitArray.Copy();
+            var res2 = copied.Invert(0, 0);
+            var res3 = copied.InvertArea(1, 0, 2, 2);
+            var res4 = bitArray.Invert(8, 9);
+            
+            // Assert
+            Assert.AreEqual(true, res1);
+            Assert.AreEqual(true, res2);
+            Assert.AreEqual(true, res3);
+            Assert.AreEqual(true, res4);
+            
+            Assert.AreEqual(false, bitArray.GetValue(0, 0));
+            Assert.AreEqual(false, bitArray.GetValue(1, 0));
+            Assert.AreEqual(true, bitArray.GetValue(9, 9));
+            Assert.AreEqual(true, bitArray.GetValue(8, 9));
+
+            Assert.AreEqual(true, copied.GetValue(0, 0));
+            Assert.AreEqual(true, copied.GetValue(1, 0));
+            Assert.AreEqual(true, copied.GetValue(9, 9));
+            Assert.AreEqual(false, copied.GetValue(8, 9));
+        }
     }
 }

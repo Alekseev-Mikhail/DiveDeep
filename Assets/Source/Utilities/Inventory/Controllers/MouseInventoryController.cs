@@ -1,26 +1,31 @@
 ﻿using Source.Utilities.Inventory.Items;
+using Source.Utilities.Inventory.Views;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Source.Utilities.Inventory.Views.Manipulators
+namespace Source.Utilities.Inventory.Controllers
 {
-    public class ColoredInventoryDragger : PointerManipulator
+    public class MouseInventoryController<TItem> : PointerManipulator, IController<TItem> where TItem : IPlayerItem
     {
-        private readonly ColoredItem _item;
-        private readonly Inventory<ColoredItem> _inventory;
-        private readonly InventoryMarkup _markup;
-
+        private View<TItem> _view;
+        private Inventory<TItem> _inventory;
+        private TItem _item;
+        
         private Vector2 _startTargetPosition;
         private Vector3 _startPointerPosition;
         private bool _isDragged;
         private int _pointerId = -1;
-
-        public ColoredInventoryDragger(ColoredItem item, Inventory<ColoredItem> inventory, InventoryMarkup markup)
+        
+        public MouseInventoryController()
         {
-            _item = item;
-            _inventory = inventory;
-            _markup = markup;
             activators.Add(new ManipulatorActivationFilter { button = MouseButton.LeftMouse });
+        }
+
+        public void Init(View<TItem> view, Inventory<TItem> inventory, TItem item)
+        {
+            _view = view;
+            _inventory = inventory;
+            _item = item;
         }
 
         protected override void RegisterCallbacksOnTarget()
@@ -36,9 +41,11 @@ namespace Source.Utilities.Inventory.Views.Manipulators
             target.UnregisterCallback<PointerMoveEvent>(OnPointerMove);
             target.UnregisterCallback<PointerUpEvent>(OnPointerUp);
         }
-
+        
         private void OnPointerDown(PointerDownEvent e)
         {
+            if (e.button == (int)MouseButton.RightMouse) DropItem(); 
+            
             if (_isDragged)
             {
                 e.StopImmediatePropagation();
@@ -57,7 +64,7 @@ namespace Source.Utilities.Inventory.Views.Manipulators
 
             target.BringToFront();
         }
-
+        
         private void OnPointerMove(PointerMoveEvent e)
         {
             if (!_isDragged || !target.HasPointerCapture(_pointerId)) return;
@@ -74,22 +81,33 @@ namespace Source.Utilities.Inventory.Views.Manipulators
         {
             if (!_isDragged || !target.HasPointerCapture(_pointerId) || !CanStopManipulation(e)) return;
 
-            var x = Mathf.RoundToInt((target.layout.x - _markup.Margin) / _markup.SizeAndMargin);
-            var y = Mathf.RoundToInt((target.layout.y - _markup.Margin) / _markup.SizeAndMargin);
-            if (_inventory.MoveItem(_item, x, y))
-            {
-                target.style.top = _markup.SizeAndMargin * y + _markup.Margin;
-                target.style.left = _markup.SizeAndMargin * x + _markup.Margin;
-            }
-            else
-            {
-                target.style.top = _startTargetPosition.y;
-                target.style.left = _startTargetPosition.x;
-            }
+            var nearestSlot = _view.GetNearestSlot(target.layout.x, target.layout.y);
+            if (_inventory.MoveItem(_item, nearestSlot.x, nearestSlot.y)) SetNewPosition(nearestSlot);
+            else SetStartPosition();
 
             _isDragged = false;
             target.ReleaseMouse();
             e.StopPropagation();
+        }
+
+        private void DropItem()
+        {
+            if (!_inventory.RemoveItem(_item)) return;
+            target.RemoveFromHierarchy();
+            _item.Drop();
+        }
+        
+        private void SetNewPosition(Vector2Int nearestSlot)
+        {
+            var position = _view.GetSlotPosition(nearestSlot.x, nearestSlot.y);
+            target.style.left = position.x;
+            target.style.top = position.y;
+        }
+
+        private void SetStartPosition()
+        {
+            target.style.left = _startTargetPosition.x;
+            target.style.top = _startTargetPosition.y;
         }
     }
 }

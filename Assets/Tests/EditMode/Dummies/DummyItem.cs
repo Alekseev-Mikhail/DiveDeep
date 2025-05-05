@@ -1,5 +1,5 @@
-﻿using Source.Utilities;
-using Source.Utilities.Inventory.Items;
+﻿using Source.Utilities.Inventory.Items;
+using UnityEngine;
 
 namespace Tests.EditMode.Dummies
 {
@@ -13,5 +13,13 @@ namespace Tests.EditMode.Dummies
 
         public int Width { get; }
         public int Height { get; }
+
+        public void Pickup(Transform player, float maxDropDistance)
+        {
+        }
+
+        public void Drop()
+        {
+        }
     }
 }

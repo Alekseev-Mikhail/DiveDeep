@@ -1,0 +1,5 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="Body" style="flex-grow: 1; align-items: center; justify-content: center;">
+        <ui:VisualElement name="Crosshair" style="flex-grow: 1; width: auto; height: auto; max-width: 5px; max-height: 5px; -unity-background-image-tint-color: rgb(255, 255, 255); min-width: 5px; min-height: 5px; background-color: rgba(255, 255, 255, 0.37);" />
+    </ui:VisualElement>
+</ui:UXML>

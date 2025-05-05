@@ -1,22 +1,20 @@
 ﻿using System.Collections.Generic;
 using Source.Utilities.Inventory.Items;
-using Source.Utilities.Inventory.Views.Manipulators;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Source.Utilities.Inventory.Views
 {
-    public class ColoredInventoryView : IView<ColoredItem>
+    public class ColoredInventoryView : View<IColoredItem>
     {
-        private readonly InventoryMarkup _markup;
-        private readonly Dictionary<VisualElement, ColoredInventoryDragger> _itemDraggers = new();
+        private readonly ColoredInventoryMarkup _markup;
 
-        public ColoredInventoryView(InventoryMarkup markup)
+        public ColoredInventoryView(ColoredInventoryMarkup markup)
         {
             _markup = markup;
         }
 
-        public void ConstructView(UIDocument document, Inventory<ColoredItem> inventory)
+        public override Dictionary<IColoredItem, VisualElement> ConstructView(UIDocument document, Inventory<IColoredItem> inventory)
         {
             document.rootVisualElement.style.justifyContent = Justify.Center;
             document.rootVisualElement.style.alignItems = Align.Center;
@@ -32,24 +30,32 @@ namespace Source.Utilities.Inventory.Views
                 }
             }
 
+            var itemElements = new Dictionary<IColoredItem, VisualElement>();
             foreach (var (item, position) in inventory.GetItems())
             {
                 var element = ConstructItem(item, position);
-                var dragger = new ColoredInventoryDragger(item, inventory, _markup);
-                element.AddManipulator(dragger);
-                _itemDraggers.Add(element, dragger);
+                itemElements.Add(item, element);
                 frame.Add(element);
             }
+            return itemElements;
         }
 
-        public void BreakDown()
+        public override void DeconstructView()
         {
-            foreach (var (element, dragger) in _itemDraggers)
-            {
-                element.RemoveManipulator(dragger);
-            }
+        }
 
-            _itemDraggers.Clear();
+        public override Vector2Int GetNearestSlot(float x, float y)
+        {
+            var nearestX = Mathf.RoundToInt((x - _markup.Margin) / _markup.SizeAndMargin);
+            var nearestY = Mathf.RoundToInt((y - _markup.Margin) / _markup.SizeAndMargin);
+            return new Vector2Int(nearestX, nearestY);
+        }
+
+        public override Vector2 GetSlotPosition(int x, int y)
+        {
+            var posX = _markup.SizeAndMargin * x + _markup.Margin;
+            var posY = _markup.SizeAndMargin * y + _markup.Margin;
+            return new Vector2(posX, posY);
         }
 
         private VisualElement ConstructFrame() => new()
@@ -78,7 +84,7 @@ namespace Source.Utilities.Inventory.Views
             }
         };
 
-        private VisualElement ConstructItem(ColoredItem item, Vector2Int position) => new()
+        private VisualElement ConstructItem(IColoredItem item, Vector2Int position) => new()
         {
             style =
             {
